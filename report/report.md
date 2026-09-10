@@ -4,7 +4,7 @@ This project implements a solution to train a machine-learning model to label im
 By implementing this solution, I aim to explore the following questions:
 - How is the Fashion-MNIST dataset structured? 
 - How is data curated for ML training?
-- How is logistic regression implemented in training a ML model?
+- How is logistic regression implemented for training a ML model?
 
 ## Dataset Description
 - Describe the structure of the dataset: What do the rows and columns represent? What are the labels/classes?
@@ -21,7 +21,7 @@ The assignment has tasked me with accessing the `Fashion-MNIST` dataset through 
 from tensorflow.keras.datasets import fashion-mnist as mnist
 ```
 
-If it was imported in this way, the sample code this project was based on could be used largely unmodified. Instead, I created a script named `data.py` and used the `kagglehub` library provided by kaggle to import `Fashion-MNIST`. 
+If it was imported in this way, the sample code this project was based on could be used largely unmodified. Instead, I created a script named `data.py` and used the `kagglehub` library provided by kaggle to import `Fashion-MNIST`.[^1] 
 
 ```
 dataset_path = Path(kagglehub.dataset_download("zalando-research/fashionmnist"))
@@ -33,7 +33,7 @@ dataset_path = Path(kagglehub.dataset_download("zalando-research/fashionmnist"))
 x_train = load_idx_images(dataset_path / "train-images-idx3-ubyte")
 ```
 
-`load_idx_images()` is a function I wrote to parse the images from a given section of the database. It iterates through the file based on the IDX format specified in the [MNIST Github repository](https://github.com/sunsided/mnist).[^1] The files in `Fashion-MNIST` are in the same IDX format as the `MNIST` handwritten digit database. The image file header consists of four 32-bit integers representing the magic number, number of images, number of rows, and number of columns, respectively. The integers are stored in big-endian format, with the most significant bit first. A string, `">IIII"`, provides the layout to `struct.unpack()`. I do not use the magic number. 
+`load_idx_images()` is a function I wrote to parse the images from a given section of the database. It iterates through the file based on the IDX format specified in the [MNIST Github repository](https://github.com/sunsided/mnist).[^2] The files in `Fashion-MNIST` are in the same IDX format as the `MNIST` handwritten digit database. The image file header consists of four 32-bit integers representing the magic number, number of images, number of rows, and number of columns, respectively. The integers are stored in big-endian format, with the most significant bit first. A string, `">IIII"`, provides the layout to `struct.unpack()`. I do not use the magic number. 
 
 ```
 def load_idx_images(path: Path) -> np.ndarray:
@@ -43,7 +43,7 @@ def load_idx_images(path: Path) -> np.ndarray:
     return images.reshape(count, rows, columns)
 ```
 
-After the header is extracted, the images are read one pixel at a time. Each pixel is an unsigned 8-bit integer. The pixels are stored in the images array. After all of the pixels have been read, `reshape()` is used to structure the pixel data into separate images based on the number of images (count) and the resolution (rows & columns).
+After the header is extracted, the images are read one pixel at a time. Each pixel is an unsigned 8-bit integer. The pixels are stored in the images array. After the pixels have been read, `reshape()` is used to structure the pixel data into separate images based on the number of images (count) and the resolution (rows & columns).
 
 Labels are handled similarly in the `load_idx_labels` function. Labels are only integer values, so they must be reconciled later with an array of label names. The images and labels are returned from `data.py` together. 
 ```
@@ -91,4 +91,6 @@ it affects model performance on Fashion-MNIST.
 on a new input.
 
 ## References
-[^1]: M. Mayer (sunsided), “MNIST,” GitHub repository, containing specifications credited to Y. LeCun and C. Cortes. [Online]. Available: https://github.com/sunsided/mnist. [Accessed: Sep. 10, 2026].
+[^1]:Zalando Research, “Fashion-MNIST,” Kaggle dataset. [Online]. Available: https://www.kaggle.com/datasets/zalando-research/fashionmnist. [Accessed: Sep. 10, 2026].
+
+[^2]: M. Mayer (sunsided), “MNIST,” GitHub repository, containing specifications credited to Y. LeCun and C. Cortes. [Online]. Available: https://github.com/sunsided/mnist. [Accessed: Sep. 10, 2026].
