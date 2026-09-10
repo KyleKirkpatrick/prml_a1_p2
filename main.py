@@ -2,14 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
-from tensorflow.keras.datasets import mnist
 
+# import the fashion_mnist loader from data.py
+from data import get_fashion_mnist_path
 
-# Load data: (x_train, y_train) for training, (x_test, y_test) for testing
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+# store the path to the Fashion-MNIST dataset
+dataset_path = get_fashion_mnist_path()
 
-print("Training set shape:", x_train.shape)
-print("Test set shape:", x_test.shape)
+train_images = dataset_path / "train-images-idx3-ubyte"
+test_images = dataset_path / "t10k-images-idx3-ubyte"
+
+print(test_images)
 
 plt.figure(figsize=(10,5))
 for i in range(5):
