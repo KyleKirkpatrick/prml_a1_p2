@@ -30,10 +30,10 @@ def load_idx_images(path: Path) -> np.ndarray:
             # reads the header of the IDX file and unpacks it into four unsigned integers
             # image file header structure:
             # >: big-endian
-            # I: unsigned 32-bit int: magic number
-            # I: unsigned 32-bit int: number of images
-            # I: unsigned 32-bit int: number of rows
-            # I: unsigned 32-bit int: number of columns
+            # I: 32-bit int: magic number
+            # I: 32-bit int: number of images
+            # I: 32-bit int: number of rows
+            # I: 32-bit int: number of columns
             ">IIII",
             file.read(16),
         )
@@ -54,8 +54,8 @@ def load_idx_labels(path: Path) -> np.ndarray:
             # reads the header of the IDX file and unpacks it into two unsigned integers
             # label file header structure:
             # >: big-endian
-            # I: unsigned 32-bit int: magic number
-            # I: unsigned 32-bit int: number of labels
+            # I: 32-bit int: magic number
+            # I: 32-bit int: number of labels
             ">II",
             file.read(8),
         )
