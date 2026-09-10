@@ -4,21 +4,31 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 
 # import the fashion_mnist loader from data.py
-from data import get_fashion_mnist_path
+from data import load_fashion_mnist
 
-# store the path to the Fashion-MNIST dataset
-dataset_path = get_fashion_mnist_path()
+(x_train, y_train), (x_test, y_test) = load_fashion_mnist()
 
-train_images = dataset_path / "train-images-idx3-ubyte"
-test_images = dataset_path / "t10k-images-idx3-ubyte"
+print("Training set shape:", x_train.shape)
+print("Test set shape:", x_test.shape)
 
-print(test_images)
+class_names = [
+    "T-shirt/top",
+    "Trouser",
+    "Pullover",
+    "Dress",
+    "Coat",
+    "Sandal",
+    "Shirt",
+    "Sneaker",
+    "Bag",
+    "Ankle boot",
+]
 
 plt.figure(figsize=(10,5))
 for i in range(5):
     plt.subplot(1, 5, i+1)
     plt.imshow(x_train[i], cmap='gray')
-    plt.title(f"Label: {y_train[i]}")
+    plt.title(class_names[y_train[i]])      # adjusted to use the name labels
     plt.axis('off')
 plt.show()
 
@@ -34,10 +44,10 @@ x_test_flat = x_test_flat.astype('float32') / 255.0
 # Using 'saga' solver for large datasets and multinomial classification
 model = LogisticRegression(
     solver='saga',
-    # multi_class='multinomial',
+    # multi_class='multinomial',    # 'multinomial' is the default for 'saga' solver, so this line can be omitted
     max_iter=100,      # Number of iterations
     verbose=1,         # Show training progress
-    n_jobs=-1          # Use all CPU cores for speed
+    # n_jobs=-1          # deprecated
 )
 
 # Train the model
@@ -61,7 +71,7 @@ plt.figure(figsize=(10,5))
 for i in range(10):
     plt.subplot(2, 5, i+1)
     plt.imshow(x_test[i], cmap='gray')
-    plt.title(f"Pred: {y_pred[i]}\nTrue: {y_test[i]}")
+    plt.title(f"Pred: {class_names[y_pred[i]]}\nTrue: {class_names[y_test[i]]}")    # adjusted to use the name labels
     plt.axis('off')
 plt.show()
 
@@ -74,7 +84,7 @@ plt.figure(figsize=(10, 5))
 for i, idx in enumerate(correct_indices[:10]):
     plt.subplot(2, 5, i+1)
     plt.imshow(x_test[idx], cmap='gray')
-    plt.title(f"Pred: {y_pred[idx]}\nTrue: {y_test[idx]}")
+    plt.title(f"Pred: {class_names[y_pred[idx]]}\nTrue: {class_names[y_test[idx]]}")    # adjusted to use the name labels
     plt.axis('off')
 plt.suptitle("Correct Predictions")
 plt.show()
@@ -84,7 +94,7 @@ plt.figure(figsize=(10, 5))
 for i, idx in enumerate(incorrect_indices[:10]):
     plt.subplot(2, 5, i+1)
     plt.imshow(x_test[idx], cmap='gray')
-    plt.title(f"Pred: {y_pred[idx]}\nTrue: {y_test[idx]}", color='red')
+    plt.title(f"Pred: {class_names[y_pred[idx]]}\nTrue: {class_names[y_test[idx]]}", color='red')
     plt.axis('off')
 plt.suptitle("Incorrect Predictions")
 plt.show()
