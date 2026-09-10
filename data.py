@@ -4,6 +4,17 @@ import struct
 import kagglehub
 import numpy as np
 
+"""Provides functions to load the Fashion-MNIST dataset from Kaggle and return it as NumPy arrays.
+
+Hopefully this will be portable so that this project can be shared without needing the dataset
+to be included in the shared repository. The dataset will be automatically downloaded from Kaggle 
+if it is not already present in the local environment.
+
+The Fashion-MNIST dataset is a collection of 28x28 grayscale images of fashion items, along with 
+their corresponding labels. The dataset is stored in IDX file format, which is a simple binary 
+format for storing vectors and multidimensional matrices. The functions in this module read the 
+IDX files, parse the data, and return it as NumPy arrays.
+"""
 
 def load_idx_images(path: Path) -> np.ndarray:
     """Reads IDX image files and returns a NumPy array of images.
