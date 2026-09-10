@@ -31,7 +31,7 @@ x_test_flat = x_test_flat.astype('float32') / 255.0
 # Using 'saga' solver for large datasets and multinomial classification
 model = LogisticRegression(
     solver='saga',
-    # multi_class='multinomial',
+    multi_class='multinomial',
     max_iter=100,      # Number of iterations
     verbose=1,         # Show training progress
     n_jobs=-1          # Use all CPU cores for speed
