@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 
+# saving and loading models
+import joblib
+
 # import the fashion_mnist loader from data.py
 from data import load_fashion_mnist
 
+# download (as needed) and load the Fashion MNIST dataset
 (x_train, y_train), (x_test, y_test) = load_fashion_mnist()
 
 print("Training set shape:", x_train.shape)
@@ -52,6 +56,9 @@ model = LogisticRegression(
 
 # Train the model
 model.fit(x_train_flat, y_train)
+
+# Saving model
+#joblib.dump(model_2, "model_2.pkl")
 
 # Accuracy on the test set
 accuracy = model.score(x_test_flat, y_test)
