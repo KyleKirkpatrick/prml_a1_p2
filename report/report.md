@@ -1,5 +1,5 @@
 ## Problem Introduction
-This project implements a solution to train a machine-learning model to label images depicting various articles of clothing. It uses the publically accessible `Fashion-MNIST` dataset for training and testing. The solution is adapted from previous code examples using the MNIST database of handwritten digits, restructured to import the fashion database instead. 
+This project implements a solution to train a machine-learning model to label images depicting various articles of clothing. It uses the publicly accessible `Fashion-MNIST` dataset for training and testing. The solution is adapted from previous code examples using the MNIST database of handwritten digits, restructured to import the fashion database instead. 
 
 By implementing this solution, I aim to explore the following questions:
 - How is the Fashion-MNIST dataset structured? 
@@ -7,12 +7,15 @@ By implementing this solution, I aim to explore the following questions:
 - How is logistic regression implemented for training a ML model?
 
 ## Dataset Description
-- Describe the structure of the dataset: What do the rows and columns represent? What are the labels/classes?
-- Highlight any important characteristics of the dataset that may influence your modeling.
+The `Fashion-MNIST` dataset contains 70,000 images of clothing articles curated for training machine-learning algorithms.[^1] The images are pre-processed to 28x28 grayscale images with high-contrast emphasising distinctive features while minimising file size. Each image has an associated class label represented by a number that can be matched to a list of clothing types (T-shirt/top, Trouser, Pullover, Dress, etc.). 
+
+The kaggle distribution of `Fashion-MNIST` includes a CSV format that combines the labels and the images, which I am not using for my implementation. The IDX format is the same format used for the `MNIST` handwriting dataset, and is simpler to use for my implementation. It includes four files; training images, training labels, testing images, and testing labels. 
+
+The files each start with a header that defines the structure of the data. First, a magic number codes the datatype in the dataset (`0x08` unsigned byte) and the number of dimensions of the matrix. Then, the next value stores the number of items in the set. For the image sets, the 3rd and 4th values in the header store the number of rows and the number of columns, respectively. The images are 28x28 pixels in size corresponding to 28 rows and 28 columns. With this header data, we can determine where the pixels for one image end and the next image begin within the large binary blob. As the images are 28x28, each image is 784 pixels long. 
 
 ## Justification for Using Logistic Regression
 • Explain why logistic regression is an appropriate model for this classification task.
-• Discuss its strengths and limitations in the context of Fashion-MNIST.
+• Discuss its strengths and limitations in the context of Fashion-MNIST. 
 
 ## Data Retrieval
 The assignment has tasked me with accessing the `Fashion-MNIST` dataset through kaggle, so I went to extra effort to implement it using this repository. The easy way to import the dataset would be to import it from tensorflow:
@@ -27,7 +30,7 @@ If it was imported in this way, the sample code this project was based on could 
 dataset_path = Path(kagglehub.dataset_download("zalando-research/fashionmnist"))
 ```
 
-`kagglehub.dataset_download()` retreives the dataset if it is not already cached on the current machine. The local path to the dataset is then stored in `dataset_path`. I add a section name to the path to extract particular portions of the dataset. 
+`kagglehub.dataset_download()` retrieves the dataset if it is not already cached on the current machine. The local path to the dataset is then stored in `dataset_path`. I add a section name to the path to extract particular portions of the dataset. 
 
 ```
 x_train = load_idx_images(dataset_path / "train-images-idx3-ubyte")
