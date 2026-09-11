@@ -66,15 +66,34 @@ i. Show example images and labels
 ii. Display the pixel matrix for an image
 iii. Describe the data format, ranges, and any preprocessing needs
 iv. Note any important patterns, class distribution, or anomalies
+
 ## Building the Logistic Regression Model
-For each step, show and explain your code:
-i. Load required Python libraries/packages
-ii. Select the target variable (labels)
-iii. Prepare the data (e.g., flatten images, normalize pixel values)
-iv. Split the data into training and validation sets
-v. Initialize a logistic regression classifier
-vi. Train (fit) the model on the training data
-vii. Evaluate predictions on unseen (validation/test) data
+### i. Load required Python libraries/packages
+I used `uv` to add the required libraries to the project, which creates a `pyproject.toml` file that lists the dependencies and a `uv.lock` file that stores the package names and their repository locations. To load the project on any given machine first install `uv`, clone the project repo, and then run this command in the project directory:
+```
+uv sync
+```
+This will install all needed dependencies and create a local virtual environment for the project. 
+
+With the dependencies installed, the following code in `main.py` imports the needed libraries:
+```
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+```
+`data.py` is also imported to ingest the `Fashion_MNIST` dataset as outlined in [Data Retrieval](#data-retrieval)
+```
+from data import load_fashion_mnist
+(x_train, y_train), (x_test, y_test) = load_fashion_mnist()
+```
+### ii. Select the target variable (labels)
+
+### iii. Prepare the data (e.g., flatten images, normalize pixel values)
+### iv. Split the data into training and validation sets
+### v. Initialize a logistic regression classifier
+### vi. Train (fit) the model on the training data
+### vii. Evaluate predictions on unseen (validation/test) data
 ## Results Analysis
 i. Generate a classification report (precision, recall, F1-score)
 ii. Create a confusion matrix to visualize model performance
