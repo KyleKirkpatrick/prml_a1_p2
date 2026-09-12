@@ -70,6 +70,9 @@ The labels use the `uint8` data type and values from `0` to `9`. The class names
 
 The program displays labelled examples from the training data. It also prints the complete 28 x 28 pixel matrix for the first training image. That image has label `9`, corresponding to Ankle boot. The matrix contains mostly zero-valued background pixels and higher values around the outline and body of the item. This confirms that the image data contains grayscale intensity values rather than binary pixels.
 
+![Fashion-MNIST training examples](figures/training_examples.png)
+*Figure 1: Labelled examples from the Fashion-MNIST training set.*
+
 Before training, I reshaped each image from a 28 x 28 matrix into a vector of 784 features. I then converted the vectors to `float32` and normalised each pixel by dividing by `255`. The resulting feature range is `[0, 1]`, which provides a consistent numeric scale for the logistic-regression model.
 
 ## Building the Logistic Regression Model
@@ -86,6 +89,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
+```
+
+NumPy stores the image and label arrays and provides the reshaping and counting operations used during inspection and preprocessing. Matplotlib produces the image and prediction visualisations. `LogisticRegression` provides the classifier, while `classification_report` and `confusion_matrix` provide complementary evaluation measures. The `joblib` package saves and reloads the fitted estimator.
+
+The script also imports `StratifiedKFold`, `cross_val_score`, and `train_test_split` from `sklearn.model_selection` for the training-only regularisation comparison:
+
+```python
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
+import joblib
 ```
 `data.py` is also imported to ingest the `Fashion-MNIST` dataset as outlined in [Data Retrieval](#data-retrieval)
 ```
@@ -109,6 +121,8 @@ The dataset already provides separate training and test sets. I used the 60,000 
 ### v. Initialising a logistic regression classifier
 
 The final classifier uses the `saga` solver with pure L2 regularisation. In scikit-learn 1.9, this is represented by `l1_ratio=0.0`. The model uses `max_iter=300`, `tol=1e-3`, and `random_state=42`.
+
+`LogisticRegression` creates the classifier from the supplied configuration. The `solver` selects the optimisation algorithm, `l1_ratio=0.0` selects pure L2 regularisation in the installed scikit-learn version, `max_iter` limits the number of optimisation iterations, `tol` controls the stopping tolerance, and `random_state` makes the stochastic `saga` solver reproducible.
 
 ```python
 model = LogisticRegression(
@@ -139,23 +153,54 @@ After fitting, I generated predictions for the held-out test features. The final
 
 The final classification report produced a macro-average precision of `0.8427`, macro-average recall of `0.8439`, and macro-average F1-score of `0.8430`. Trouser had the highest recall at `0.9580`, while Shirt had the lowest recall at `0.5680`.
 
+![Fashion-MNIST classification report](figures/classification_report.png)
+*Figure 2: Classification report for the final test evaluation.*
+
+In the classification report, precision measures how often predictions for a class are correct, recall measures how many examples of that class are found, and the F1-score combines precision and recall. Support is the number of test examples belonging to each class. The macro average gives equal weight to each class, which is appropriate here because the test set contains 1,000 examples per class.
+
 ### Confusion matrix
 
 The confusion matrix shows that the model classified footwear classes more consistently than several upper-body clothing classes. The largest errors involved Shirt being predicted as T-shirt/top, Pullover, Coat, or Dress. Pullover was also often confused with Coat and Shirt. These errors are consistent with the similar silhouettes and overlapping pixel patterns of these classes.
+
+Rows in the confusion matrix represent the true class and columns represent the predicted class. Values on the diagonal are correct predictions. Off-diagonal values show the classes assigned incorrectly. For example, 145 Shirt images were predicted as T-shirt/top, making this one of the most prominent errors in the final test evaluation.
+
+![Fashion-MNIST confusion matrix](figures/confusion_matrix.png)
+*Figure 3: Confusion matrix for the final test evaluation.*
 
 ### Correct predictions example images
 
 The program displays examples from the test set with their predicted and true class names. These examples provide visual evidence of predictions where the model assigned the correct class.
 
+![Correct test predictions](figures/correct_predictions.png)
+*Figure 4: Examples of correctly classified test images.*
+
 ### Misclassified examples
 
 The program also displays incorrect predictions with the predicted and true class names. The most difficult class was Shirt, which had a recall of `0.5680`. The errors may result from the 28 x 28 image resolution, similar shapes between upper-body classes, and the linear decision boundary produced from flattened pixel features.
+
+![Incorrect test predictions](figures/incorrect_predictions.png)
+*Figure 5: Examples of incorrectly classified test images.*
 
 ## Regularisation in Logistic Regression
 
 Regularisation adds a penalty to the model coefficients during training. It discourages unnecessarily large coefficients and can reduce sensitivity to noise in the training data. L1 regularisation encourages some coefficients to become exactly zero, while L2 regularisation reduces the magnitude of all coefficients without usually removing them completely. The parameter `C` controls the inverse of regularisation strength: smaller values apply stronger regularisation.
 
 I compared L1 and L2 regularisation using three-fold stratified cross-validation on a stratified subset of 10,000 training images. Both comparisons used the `saga` solver, `max_iter=300`, `tol=1e-3`, and `random_state=42`. L1 produced an accuracy of `0.8364 +/- 0.0023`, while L2 produced `0.8311 +/- 0.0018`. The L1 fits reached the iteration limit, so this comparison should be reported as provisional rather than as definitive evidence that L1 is superior.
+
+The cross-validation code followed the Week 4 lab pattern:
+
+```python
+cross_validation = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+scores = cross_val_score(
+    regularisation_model,
+    x_regularisation,
+    y_regularisation,
+    cv=cross_validation,
+    scoring="accuracy",
+)
+```
+
+Cross-validation was used to compare regularisation settings across several held-out partitions of the training subset. This reduces reliance on one arbitrary split while keeping the test set available for the final evaluation.
 
 The final model uses pure L2 regularisation and was evaluated separately on the held-out test set. It achieved an accuracy of `0.8439`.
 
