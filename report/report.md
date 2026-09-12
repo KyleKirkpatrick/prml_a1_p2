@@ -9,9 +9,9 @@ By implementing this solution, I aim to explore the following questions:
 ## Dataset Description
 The `Fashion-MNIST` dataset contains 70,000 images of clothing articles curated for training machine-learning algorithms.[^1] The images are pre-processed to 28x28 grayscale images with high-contrast emphasising distinctive features while minimising file size. Each image has an associated class label represented by a number that can be matched to a list of clothing types (T-shirt/top, Trouser, Pullover, Dress, etc.). 
 
-The kaggle distribution of `Fashion-MNIST` includes a CSV format that combines the labels and the images, which I am not using for my implementation. The IDX format is the same format used for the `MNIST` handwriting dataset, and is simpler to use for my implementation. It includes four files; training images, training labels, testing images, and testing labels. 
+The Kaggle distribution of `Fashion-MNIST` includes a CSV format that combines the labels and the images, which I am not using for my implementation. The IDX format is the same format used for the `MNIST` handwriting dataset, and is simpler to use for my implementation. It includes four files; training images, training labels, testing images, and testing labels.
 
-The files each start with a header that defines the structure of the data. First, a magic number codes the datatype in the dataset (`0x08` unsigned byte) and the number of dimensions of the matrix. Then, the next value stores the number of items in the set. For the image sets, the 3rd and 4th values in the header store the number of rows and the number of columns, respectively. The value in this header shows 28 rows and 28 columns representing the image size of 28x28 pixels. With this header data, we can determine where the pixels for one image end and the next image begin within the large binary blob. As the images are 28x28, each image is 784 pixels long. 
+The files each start with a header that defines the structure of the data. First, a magic number codes the datatype in the dataset (`0x08` unsigned byte) and the number of dimensions of the matrix. Then, the next value stores the number of items in the set. For the image sets, the third and fourth values in the header store the number of rows and the number of columns, respectively. The value in this header shows 28 rows and 28 columns representing the image size of 28x28 pixels. With this header data, we can determine where the pixels for one image end and the next image begin within the large binary blob. As the images are 28x28, each image is 784 pixels long.
 
 ## Justification for Using Logistic Regression
 Logistic regression is appropriate for this task because it can assign each image to one of ten classes using the pixel values as input features. In this implementation, the `saga` solver fits a multinomial classifier with one output probability for each clothing class. The predicted label is the class with the highest probability.
@@ -21,7 +21,7 @@ Logistic regression provides a useful baseline for Fashion-MNIST. It is relative
 The main limitation is that the model uses a linear decision function over flattened pixels. It does not directly represent local shapes, edges, or spatial relationships between neighbouring pixels. This limits its ability to distinguish visually similar classes. The test results show this limitation most clearly for Shirt, which had a recall of `0.5680`, compared with a recall of `0.9580` for Trouser.
 
 ## Data Retrieval
-The assignment has tasked me with accessing the `Fashion-MNIST` dataset through kaggle, so I went to extra effort to implement it using this repository. The easy way to import the dataset would be to import it from tensorflow:
+The assignment has tasked me with accessing the `Fashion-MNIST` dataset through Kaggle, so I went to extra effort to implement it using this repository. The easy way to import the dataset would be to import it from TensorFlow:
 
 ``` 
 from tensorflow.keras.datasets import fashion_mnist as mnist
@@ -39,7 +39,7 @@ dataset_path = Path(kagglehub.dataset_download("zalando-research/fashionmnist"))
 x_train = load_idx_images(dataset_path / "train-images-idx3-ubyte")
 ```
 
-`load_idx_images()` is a function I wrote to parse the images from a given section of the database. It iterates through the file based on the IDX format specified in the [MNIST Github repository](https://github.com/sunsided/mnist).[^2] The files in `Fashion-MNIST` are in the same IDX format as the `MNIST` handwritten digit database. The image file header consists of four 32-bit integers representing the magic number, number of images, number of rows, and number of columns, respectively. The integers are stored in big-endian format, with the most significant bit first. A string, `">IIII"`, provides the layout to `struct.unpack()`. I do not use the magic number. 
+`load_idx_images()` is a function I wrote to parse the images from a given section of the database. It reads the remaining image bytes into a NumPy array and reshapes that array using the dimensions from the header. This follows the IDX format specified in the [MNIST Github repository](https://github.com/sunsided/mnist).[^2] The files in `Fashion-MNIST` are in the same IDX format as the `MNIST` handwritten digit database. The image file header consists of four 32-bit integers representing the magic number, number of images, number of rows, and number of columns, respectively. The integers are stored in big-endian format, with the most significant bit first. A string, `">IIII"`, provides the layout to `struct.unpack()`. I do not use the magic number.
 
 ```
 def load_idx_images(path: Path) -> np.ndarray:
@@ -87,7 +87,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 ```
-`data.py` is also imported to ingest the `Fashion_MNIST` dataset as outlined in [Data Retrieval](#data-retrieval)
+`data.py` is also imported to ingest the `Fashion-MNIST` dataset as outlined in [Data Retrieval](#data-retrieval)
 ```
 from data import load_fashion_mnist
 (x_train, y_train), (x_test, y_test) = load_fashion_mnist()
