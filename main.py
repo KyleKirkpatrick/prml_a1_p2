@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 
 # saving and loading models
 import joblib
@@ -71,6 +72,43 @@ x_test_flat = x_test.reshape(x_test.shape[0], -1)
 # Normalize pixel values to range [0, 1]
 x_train_flat = x_train_flat.astype('float32') / 255.0
 x_test_flat = x_test_flat.astype('float32') / 255.0
+
+# Compare regularisation choices using training data only. The test set remains
+# reserved for the final evaluation of the selected model.
+x_regularisation, _, y_regularisation, _ = train_test_split(
+    x_train_flat,
+    y_train,
+    train_size=10000,
+    stratify=y_train,
+    random_state=42,
+)
+cross_validation = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+regularisation_models = {
+    "L1": LogisticRegression(
+        penalty='l1',
+        solver='saga',
+        max_iter=100,
+        random_state=42,
+    ),
+    "L2": LogisticRegression(
+        penalty='l2',
+        solver='saga',
+        max_iter=100,
+        random_state=42,
+    ),
+}
+
+print("\nRegularisation comparison (3-fold cross-validation on 10,000 training samples):")
+for name, regularisation_model in regularisation_models.items():
+    scores = cross_val_score(
+        regularisation_model,
+        x_regularisation,
+        y_regularisation,
+        cv=cross_validation,
+        scoring='accuracy',
+        n_jobs=-1,
+    )
+    print(f"{name}: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 # Using 'saga' solver for large datasets and multinomial classification
 model = LogisticRegression(
