@@ -12,3 +12,7 @@ wheels/
 # Dataset
 .data/
 *.zip
+
+# Local planning notes and generated models
+.todo/
+models/

@@ -95,12 +95,11 @@ from data import load_fashion_mnist
 ### vi. Train (fit) the model on the training data
 ### vii. Evaluate predictions on unseen (validation/test) data
 ## Results Analysis
-i. Generate a classification report (precision, recall, F1-score)
-ii. Create a confusion matrix to visualize model performance
-iii. Show correct predictions using example images
-iv. Show misclassified examples and explore potential causes
-v. Optionally, include “corrected” images or improvements based on your insights
-(e.g., better preprocessing, tuning, or visualization)
+### i. Generate a classification report (precision, recall, F1-score)
+### ii. Create a confusion matrix to visualize model performance
+### iii. Show correct predictions using example images
+### iv. Show misclassified examples and explore potential causes
+### v. Optionally, include “corrected” images or improvements based on your insights(e.g., better preprocessing, tuning, or visualization)
 ## Regularization in Logistic Regression
 • Explain the concept of regularization (L1, L2) in logistic regression.
 • Describe how regularization helps prevent overfitting.
