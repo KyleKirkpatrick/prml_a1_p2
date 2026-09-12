@@ -14,8 +14,11 @@ The kaggle distribution of `Fashion-MNIST` includes a CSV format that combines t
 The files each start with a header that defines the structure of the data. First, a magic number codes the datatype in the dataset (`0x08` unsigned byte) and the number of dimensions of the matrix. Then, the next value stores the number of items in the set. For the image sets, the 3rd and 4th values in the header store the number of rows and the number of columns, respectively. The images are 28x28 pixels in size corresponding to 28 rows and 28 columns. With this header data, we can determine where the pixels for one image end and the next image begin within the large binary blob. As the images are 28x28, each image is 784 pixels long. 
 
 ## Justification for Using Logistic Regression
-• Explain why logistic regression is an appropriate model for this classification task.
-• Discuss its strengths and limitations in the context of Fashion-MNIST. 
+Logistic regression is appropriate for this task because it can assign each image to one of ten classes using the pixel values as input features. In this implementation, the `saga` solver fits a multinomial classifier with one output probability for each clothing class. The predicted label is the class with the highest probability.
+
+Logistic regression provides a useful baseline for Fashion-MNIST. It is relatively simple to train, its preprocessing requirements are clear, and its coefficients represent the contribution of each pixel to the class decisions. It also provides measurable precision, recall, and F1-scores for each class, which makes its behaviour straightforward to inspect.
+
+The main limitation is that the model uses a linear decision function over flattened pixels. It does not directly represent local shapes, edges, or spatial relationships between neighbouring pixels. This limits its ability to distinguish visually similar classes. The test results show this limitation most clearly for Shirt, which had a recall of `0.5680`, compared with a recall of `0.9580` for Trouser.
 
 ## Data Retrieval
 The assignment has tasked me with accessing the `Fashion-MNIST` dataset through kaggle, so I went to extra effort to implement it using this repository. The easy way to import the dataset would be to import it from tensorflow:
@@ -61,11 +64,13 @@ from data import load_fashion_mnist
 I have structured the imported data in the same way that it is presented when imported from `tensorflow.keras.datasets`, so the implementation in `main.py` is the same with either import method. 
 
 ## Data Exploration
-Demonstrate understanding and inspection of the dataset.
-i. Show example images and labels
-ii. Display the pixel matrix for an image
-iii. Describe the data format, ranges, and any preprocessing needs
-iv. Note any important patterns, class distribution, or anomalies
+The loader returned `x_train` with shape `(60000, 28, 28)` and `x_test` with shape `(10000, 28, 28)`. The image arrays use the `uint8` data type. Raw pixel values range from `0` to `255`, where `0` represents black and `255` represents the highest grayscale intensity in the stored image.
+
+The labels use the `uint8` data type and values from `0` to `9`. The class names are T-shirt/top, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, and Ankle boot. Each class contains 6,000 training images and 1,000 test images, so the supplied split is balanced across the ten classes.
+
+The program displays labelled examples from the training data. It also prints the complete 28 x 28 pixel matrix for the first training image. That image has label `9`, corresponding to Ankle boot. The matrix contains mostly zero-valued background pixels and higher values around the outline and body of the item. This confirms that the image data contains grayscale intensity values rather than binary pixels.
+
+Before training, I reshaped each image from a 28 x 28 matrix into a vector of 784 features. I then converted the vectors to `float32` and normalised each pixel by dividing by `255`. The resulting feature range is `[0, 1]`, which provides a consistent numeric scale for the logistic-regression model.
 
 ## Building the Logistic Regression Model
 ### i. Load required Python libraries/packages
