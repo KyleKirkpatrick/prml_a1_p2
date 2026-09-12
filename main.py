@@ -85,15 +85,17 @@ x_regularisation, _, y_regularisation, _ = train_test_split(
 cross_validation = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 regularisation_models = {
     "L1": LogisticRegression(
-        penalty='l1',
+        l1_ratio=1.0,
         solver='saga',
-        max_iter=100,
+        tol=1e-3,
+        max_iter=300,
         random_state=42,
     ),
     "L2": LogisticRegression(
-        penalty='l2',
+        l1_ratio=0.0,
         solver='saga',
-        max_iter=100,
+        tol=1e-3,
+        max_iter=300,
         random_state=42,
     ),
 }
@@ -112,10 +114,11 @@ for name, regularisation_model in regularisation_models.items():
 
 # Using 'saga' solver for large datasets and multinomial classification
 model = LogisticRegression(
-    penalty='l2',       # Apply L2 regularisation to the model weights
+    l1_ratio=0.0,       # Apply pure L2 regularisation to the model weights
     solver='saga',
+    tol=1e-3,
     # multi_class='multinomial',    # 'multinomial' is the default for 'saga' solver, so this line can be omitted
-    max_iter=100,      # Number of iterations
+    max_iter=300,      # Number of iterations
     random_state=42,   # Make the stochastic solver reproducible
     verbose=1,         # Show training progress
     # n_jobs=-1          # deprecated
@@ -128,6 +131,11 @@ model.fit(x_train_flat, y_train)
 saved_model_path = model_path(model)
 joblib.dump(model, saved_model_path)
 print(f"Saved model to: {saved_model_path}")
+
+# Load the saved estimator and make a prediction using the same preprocessing.
+loaded_model = joblib.load(saved_model_path)
+loaded_prediction = loaded_model.predict(x_test_flat[:1])[0]
+print(f"Loaded model prediction for first test image: {loaded_prediction}")
 
 # Accuracy on the test set
 accuracy = model.score(x_test_flat, y_test)
