@@ -8,7 +8,6 @@ The project also compares L1 and L2 regularisation using cross-validation on tra
 
 - Python 3.12 or later
 - [uv](https://docs.astral.sh/uv/)
-- Kaggle access for downloading Fashion-MNIST through KaggleHub
 
 ## Setup
 
