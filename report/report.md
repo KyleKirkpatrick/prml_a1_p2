@@ -1,3 +1,7 @@
+# Logistic Regression on Fashion-MNIST
+Pattern Recognition and Machine Learning (11482), Semester 2 2026
+Kyle Kirkpatrick, u3304181
+
 ## Problem Introduction
 This project implements a solution to train a machine-learning model to label images depicting various articles of clothing. It uses the publicly accessible `Fashion-MNIST` dataset for training and testing. The solution is adapted from previous code examples using the MNIST database of handwritten digits, restructured to import the fashion database instead.[^3]
 
@@ -9,16 +13,14 @@ By implementing this solution, I aim to explore the following questions:
 ## Dataset Description
 The `Fashion-MNIST` dataset contains 70,000 images of clothing articles curated for training machine-learning algorithms.[^1] The images are pre-processed to 28x28 grayscale images with high-contrast emphasising distinctive features while minimising file size. Each image has an associated class label represented by a number that can be matched to a list of clothing types (T-shirt/top, Trouser, Pullover, Dress, etc.). 
 
-The Kaggle distribution of `Fashion-MNIST` includes a CSV format that combines the labels and the images, which I am not using for my implementation. The IDX format is the same format used for the `MNIST` handwriting dataset, and is simpler to use for my implementation. It includes four files; training images, training labels, testing images, and testing labels.
+The Kaggle distribution of `Fashion-MNIST` includes a CSV format that combines the labels and the images, which I am not using for my implementation. The IDX format is the same format used for the `MNIST` handwriting dataset, and is simpler to use for this project. It includes four files; training images, training labels, testing images, and testing labels.
 
 The files each start with a header that defines the structure of the data. First, a magic number codes the datatype in the dataset (`0x08` unsigned byte) and the number of dimensions of the matrix. Then, the next value stores the number of items in the set. For the image sets, the third and fourth values in the header store the number of rows and the number of columns, respectively. The value in this header shows 28 rows and 28 columns representing the image size of 28x28 pixels. With this header data, we can determine where the pixels for one image end and the next image begin within the large binary blob. As the images are 28x28, each image is 784 pixels long.
 
 ## Justification for Using Logistic Regression
-Logistic regression is appropriate for this task because it can assign each image to one of ten classes using the pixel values as input features. In this implementation, the `saga` solver fits a multinomial classifier with one output probability for each clothing class. The predicted label is the class with the highest probability.
+Logistic regression is appropriate for this task because it uses the pixel values as input features to assign each image to one of ten classes. In this implementation, the `saga` solver fits a multinomial classifier with one output probability for each clothing class. The predicted label is the class with the highest probability. Logistic regression's coefficients represent the contribution of each pixel to the class decisions. It also provides measurable precision, recall, and F1-scores for each class, which makes its behaviour straightforward to inspect.
 
-Logistic regression provides a useful baseline for Fashion-MNIST. It is relatively simple to train, its preprocessing requirements are clear, and its coefficients represent the contribution of each pixel to the class decisions. It also provides measurable precision, recall, and F1-scores for each class, which makes its behaviour straightforward to inspect.
-
-The main limitation is that the model uses a linear decision function over flattened pixels. It does not directly represent local shapes, edges, or spatial relationships between neighbouring pixels. This limits its ability to distinguish visually similar classes. The test results show this limitation most clearly for Shirt, which had a recall of `0.5680`, compared with a recall of `0.9580` for Trouser.
+The main limitation is that the model uses a linear decision function over flattened pixels. It does not directly represent shapes, edges, or spatial relationships between neighbouring pixels. This limits its ability to distinguish visually similar classes. The test results show this limitation most clearly for Shirt, which had a recall of `0.5680`, compared with a recall of `0.9580` for Trouser.
 
 ## Data Retrieval
 The assignment has tasked me with accessing the `Fashion-MNIST` dataset through Kaggle, so I went to extra effort to implement it using this repository. The easy way to import the dataset would be to import it from TensorFlow:
@@ -87,18 +89,13 @@ With the dependencies installed, the following code in `main.py` imports the nee
 ```
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
-```
-
-NumPy stores the image and label arrays and provides the reshaping and counting operations used during inspection and preprocessing. Matplotlib produces the image and prediction visualisations. `LogisticRegression` provides the classifier, while `classification_report` and `confusion_matrix` provide complementary evaluation measures. The `joblib` package saves and reloads the fitted estimator.
-
-The script also imports `StratifiedKFold`, `cross_val_score`, and `train_test_split` from `sklearn.model_selection` for the training-only regularisation comparison:
-
-```python
 from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 import joblib
 ```
+
 `data.py` is also imported to ingest the `Fashion-MNIST` dataset as outlined in [Data Retrieval](#data-retrieval)
 ```
 from data import load_fashion_mnist
@@ -116,7 +113,7 @@ Each 28 x 28 image was reshaped into a vector containing 784 pixel features. I c
 
 ### iv. Splitting the data into training and validation sets
 
-The dataset already provides separate training and test sets. I used the 60,000 training images to fit the final model and retained the 10,000 test images for final evaluation. The test set was not used as a validation set. Regularisation settings were compared with three-fold stratified cross-validation on a stratified 10,000-image subset of the training data.
+The dataset already provides separate training and test sets. I used the 60,000 training images to fit the final model and retained the 10,000 test images for final evaluation. The test set was not used as a validation set. Regularisation settings were compared with three-fold cross-validation on a 10,000-image subset of the training data.
 
 ### v. Initialising a logistic regression classifier
 
@@ -191,18 +188,18 @@ The program displays examples from the test set with their predicted and true cl
 
 ### Misclassified examples
 
-The program also displays incorrect predictions with the predicted and true class names. The most difficult class was Shirt, which had a recall of `0.5680`. The errors may result from the 28 x 28 image resolution, similar shapes between upper-body classes, and the linear decision boundary produced from flattened pixel features.
+The program also displays incorrect predictions with the predicted and true class names. The most difficult class was Shirt, which had a recall of `0.5680`. This is consistent with the fact that shirt displays many physical similarities to T-shirt/top, Pullover, and Coat. Though I speculate that this is exacerbated by logistic regression of flattened pixels not representing shapes or edges, features which may distinguish Shirt from similar categories. 
 
 ![Incorrect test predictions](figures/incorrect_predictions.png)
 *Figure 4: Examples of incorrectly classified test images.*
 
 ## Regularisation in Logistic Regression
 
-Regularisation adds a penalty to the model coefficients during training. It discourages unnecessarily large coefficients and can reduce sensitivity to noise in the training data. L1 regularisation encourages some coefficients to become exactly zero, while L2 regularisation reduces the magnitude of all coefficients without usually removing them completely. The parameter `C` controls the inverse of regularisation strength: smaller values apply stronger regularisation.
+Regularisation adds a penalty to the model coefficients during training. It discourages complexity and can resist overfitting. L1 regularisation encourages some coefficients to become exactly zero, while L2 regularisation reduces the magnitude of all coefficients without usually removing them completely. The parameter `C` controls the inverse of regularisation strength: smaller values apply stronger regularisation.
 
-I compared L1 and L2 regularisation using three-fold stratified cross-validation on a stratified subset of 10,000 training images. Both comparisons used the `saga` solver, `max_iter=300`, `tol=1e-3`, and `random_state=42`. L1 produced an accuracy of `0.8364 +/- 0.0023`, while L2 produced `0.8311 +/- 0.0018`. The L1 fits reached the iteration limit, so this comparison should be reported as provisional rather than as definitive evidence that L1 is superior.
+I compared L1 and L2 regularisation using three-fold cross-validation on a subset of 10,000 training images. Both comparisons used the `saga` solver, `max_iter=300`, `tol=1e-3`, and `random_state=42`. L1 produced an accuracy of `0.8364 +/- 0.0023`, while L2 produced `0.8311 +/- 0.0018`. The L1 fits reached the iteration limit, so it is unclear if it is the superior method. 
 
-The cross-validation code followed the Week 4 lab pattern.[^4]
+The cross-validation code followed the Week 4 lab approach.[^4]
 
 ```python
 cross_validation = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
@@ -232,6 +229,10 @@ prediction = loaded_model.predict(x_test_flat[:1])
 ```
 
 The input to `loaded_model.predict()` must use the same preprocessing as the training data: each image must be flattened to 784 features and its pixel values must be normalised to `[0, 1]`. The saved model predicted class `9` for the first test image, matching the prediction from the fitted model.
+
+## LLM Use Disclosure
+
+I used GPT-5.6 Luna inside Code - OSS to assist with coding syntax and error solving under constrained, project-specific instructions. I am responsible for the content of this report and all editorial decisions are my own.
 
 ## References
 [^1]:Zalando Research, “Fashion-MNIST,” Kaggle dataset. [Online]. Available: https://www.kaggle.com/datasets/zalando-research/fashionmnist. [Accessed: Sep. 10, 2026].

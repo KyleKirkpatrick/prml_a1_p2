@@ -4,6 +4,7 @@
         "Kaggle",
         "kagglehub",
         "MNIST",
-        "multinomial"
+        "multinomial",
+        "overfitting"
     ]
 }
