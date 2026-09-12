@@ -1,5 +1,5 @@
 ## Problem Introduction
-This project implements a solution to train a machine-learning model to label images depicting various articles of clothing. It uses the publicly accessible `Fashion-MNIST` dataset for training and testing. The solution is adapted from previous code examples using the MNIST database of handwritten digits, restructured to import the fashion database instead. 
+This project implements a solution to train a machine-learning model to label images depicting various articles of clothing. It uses the publicly accessible `Fashion-MNIST` dataset for training and testing. The solution is adapted from previous code examples using the MNIST database of handwritten digits, restructured to import the fashion database instead.[^3]
 
 By implementing this solution, I aim to explore the following questions:
 - How is the Fashion-MNIST dataset structured? 
@@ -202,7 +202,7 @@ Regularisation adds a penalty to the model coefficients during training. It disc
 
 I compared L1 and L2 regularisation using three-fold stratified cross-validation on a stratified subset of 10,000 training images. Both comparisons used the `saga` solver, `max_iter=300`, `tol=1e-3`, and `random_state=42`. L1 produced an accuracy of `0.8364 +/- 0.0023`, while L2 produced `0.8311 +/- 0.0018`. The L1 fits reached the iteration limit, so this comparison should be reported as provisional rather than as definitive evidence that L1 is superior.
 
-The cross-validation code followed the Week 4 lab pattern:
+The cross-validation code followed the Week 4 lab pattern.[^4]
 
 ```python
 cross_validation = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
@@ -237,3 +237,7 @@ The input to `loaded_model.predict()` must use the same preprocessing as the tra
 [^1]:Zalando Research, “Fashion-MNIST,” Kaggle dataset. [Online]. Available: https://www.kaggle.com/datasets/zalando-research/fashionmnist. [Accessed: Sep. 10, 2026].
 
 [^2]: M. Mayer (sunsided), “MNIST,” GitHub repository, containing specifications credited to Y. LeCun and C. Cortes. [Online]. Available: https://github.com/sunsided/mnist. [Accessed: Sep. 10, 2026].
+
+[^3]: University of Canberra, “PRML Week 3 Lab: MNIST Classification Using Logistic Regression,” course materials, 2026.
+
+[^4]: University of Canberra, “PRML Week 4 Lab: MNIST Regularisation and Cross-Validation,” course materials, 2026.
