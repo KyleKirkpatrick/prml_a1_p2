@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 
@@ -8,6 +9,15 @@ import joblib
 
 # import the fashion_mnist loader from data.py
 from data import load_fashion_mnist
+
+
+def model_path(model, output_dir=Path("models")):
+    """Return a descriptive path for a fitted model configuration."""
+    model_type = type(model).__name__.lower()
+    solver = getattr(model, "solver", "default")
+    iterations = getattr(model, "max_iter", "default")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return output_dir / f"{model_type}_{solver}_iter{iterations}.joblib"
 
 # download (as needed) and load the Fashion MNIST dataset
 (x_train, y_train), (x_test, y_test) = load_fashion_mnist()
@@ -58,7 +68,9 @@ model = LogisticRegression(
 model.fit(x_train_flat, y_train)
 
 # Saving model
-#joblib.dump(model_2, "model_2.pkl")
+saved_model_path = model_path(model)
+joblib.dump(model, saved_model_path)
+print(f"Saved model to: {saved_model_path}")
 
 # Accuracy on the test set
 accuracy = model.score(x_test_flat, y_test)
