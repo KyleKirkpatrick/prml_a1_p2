@@ -73,7 +73,7 @@ The program displays labelled examples from the training data. It also prints th
 Before training, I reshaped each image from a 28 x 28 matrix into a vector of 784 features. I then converted the vectors to `float32` and normalised each pixel by dividing by `255`. The resulting feature range is `[0, 1]`, which provides a consistent numeric scale for the logistic-regression model.
 
 ## Building the Logistic Regression Model
-### i. Load required Python libraries/packages
+### i. Loading required Python libraries/packages
 I used `uv` to add the required libraries to the project, which creates a `pyproject.toml` file that lists the dependencies and a `uv.lock` file that stores the package names and their repository locations. To load the project on any given machine first install `uv`, clone the project repo, and then run this command in the project directory:
 ```
 uv sync
@@ -94,19 +94,19 @@ from data import load_fashion_mnist
 ```
 
 The target variables are `y_train` and `y_test`. The corresponding image arrays, `x_train` and `x_test`, are the input features. I retained the supplied 60,000-image training set and 10,000-image test set. The test set was not used to select regularisation settings, so it provides a held-out evaluation of the final fitted model.
-### ii. Select the target variable (labels)
+### ii. Selecting the target variable (labels)
 
 The target variable is the label array. `y_train` contains the training labels and `y_test` contains the test labels. Each value identifies one of the ten Fashion-MNIST classes. The image arrays are the input features associated with these labels.
 
-### iii. Prepare the data (e.g., flatten images, normalize pixel values)
+### iii. Preparing the data
 
 Each 28 x 28 image was reshaped into a vector containing 784 pixel features. I converted the pixel vectors to `float32` and divided each value by `255`, changing the feature range from `[0, 255]` to `[0, 1]`. This produces the numeric input used by logistic regression.
 
-### iv. Split the data into training and validation sets
+### iv. Splitting the data into training and validation sets
 
 The dataset already provides separate training and test sets. I used the 60,000 training images to fit the final model and retained the 10,000 test images for final evaluation. The test set was not used as a validation set. Regularisation settings were compared with three-fold stratified cross-validation on a stratified 10,000-image subset of the training data.
 
-### v. Initialize a logistic regression classifier
+### v. Initialising a logistic regression classifier
 
 The final classifier uses the `saga` solver with pure L2 regularisation. In scikit-learn 1.9, this is represented by `l1_ratio=0.0`. The model uses `max_iter=300`, `tol=1e-3`, and `random_state=42`.
 
@@ -120,7 +120,7 @@ model = LogisticRegression(
 )
 ```
 
-### vi. Train (fit) the model on the training data
+### vi. Training the model
 
 The model was fitted using the normalised training features and their associated labels:
 
@@ -130,34 +130,28 @@ model.fit(x_train_flat, y_train)
 
 The saved model reported `n_iter_=[246]`, meaning that the final fit stopped before reaching the configured maximum of 300 iterations.
 
-### vii. Evaluate predictions on unseen (validation/test) data
+### vii. Evaluating predictions on unseen (validation/test) data
 
 After fitting, I generated predictions for the held-out test features. The final model achieved a test accuracy of `0.8439`. I also calculated a confusion matrix and a classification report containing precision, recall, F1-score, and support for each class.
 
 ## Results Analysis
-### i. Generate a classification report (precision, recall, F1-score)
+### Classification report (precision, recall, F1-score)
 
 The final classification report produced a macro-average precision of `0.8427`, macro-average recall of `0.8439`, and macro-average F1-score of `0.8430`. Trouser had the highest recall at `0.9580`, while Shirt had the lowest recall at `0.5680`.
 
-### ii. Create a confusion matrix to visualize model performance
+### Confusion matrix
 
 The confusion matrix shows that the model classified footwear classes more consistently than several upper-body clothing classes. The largest errors involved Shirt being predicted as T-shirt/top, Pullover, Coat, or Dress. Pullover was also often confused with Coat and Shirt. These errors are consistent with the similar silhouettes and overlapping pixel patterns of these classes.
 
-### iii. Show correct predictions using example images
+### Correct predictions example images
 
 The program displays examples from the test set with their predicted and true class names. These examples provide visual evidence of predictions where the model assigned the correct class.
 
-### iv. Show misclassified examples and explore potential causes
+### Misclassified examples
 
 The program also displays incorrect predictions with the predicted and true class names. The most difficult class was Shirt, which had a recall of `0.5680`. The errors may result from the 28 x 28 image resolution, similar shapes between upper-body classes, and the linear decision boundary produced from flattened pixel features.
 
-### v. Optionally, include “corrected” images or improvements based on your insights(e.g., better preprocessing, tuning, or visualization)
-
-## Regularization in Logistic Regression
-• Explain the concept of regularization (L1, L2) in logistic regression.
-• Describe how regularization helps prevent overfitting.
-• Discuss how you applied or could apply regularization in this modeling task and how
-it affects model performance on Fashion-MNIST.
+## Regularisation in Logistic Regression
 
 Regularisation adds a penalty to the model coefficients during training. It discourages unnecessarily large coefficients and can reduce sensitivity to noise in the training data. L1 regularisation encourages some coefficients to become exactly zero, while L2 regularisation reduces the magnitude of all coefficients without usually removing them completely. The parameter `C` controls the inverse of regularisation strength: smaller values apply stronger regularisation.
 
@@ -166,12 +160,8 @@ I compared L1 and L2 regularisation using three-fold stratified cross-validation
 The final model uses pure L2 regularisation and was evaluated separately on the held-out test set. It achieved an accuracy of `0.8439`.
 
 ## Saving and Using the Trained Model
-• Show how you save the trained model for future use
-• Explain how the saved model can be used to make predictions on new, unseen data.
-• (Optional) Provide a short code snippet showing how to load the model and predict
-on a new input.
 
-The fitted estimator is saved with joblib in the `models/` directory. Its filename is generated from the estimator type, solver, and maximum iteration setting. The current file is `models/logisticregression_saga_iter300.joblib`.
+The fitted estimator is saved with `joblib` in the `models/` directory. Its filename is generated from the estimator type, solver, and maximum iteration setting. The current file is `models/logisticregression_saga_iter300.joblib`.
 
 ```python
 saved_model_path = model_path(model)
