@@ -24,6 +24,12 @@ def model_path(model, output_dir=Path("models")):
 
 print("Training set shape:", x_train.shape)
 print("Test set shape:", x_test.shape)
+print("Training image dtype:", x_train.dtype)
+print("Test image dtype:", x_test.dtype)
+print("Training label dtype:", y_train.dtype)
+print("Test label dtype:", y_test.dtype)
+print("Training pixel range:", (x_train.min(), x_train.max()))
+print("Test pixel range:", (x_test.min(), x_test.max()))
 
 class_names = [
     "T-shirt/top",
@@ -37,6 +43,17 @@ class_names = [
     "Bag",
     "Ankle boot",
 ]
+
+print("Training class counts:")
+for label, count in enumerate(np.bincount(y_train, minlength=len(class_names))):
+    print(f"  {label} ({class_names[label]}): {count}")
+
+print("Test class counts:")
+for label, count in enumerate(np.bincount(y_test, minlength=len(class_names))):
+    print(f"  {label} ({class_names[label]}): {count}")
+
+print("First training image label:", y_train[0], f"({class_names[y_train[0]]})")
+print("First training image pixel matrix:\n", x_train[0])
 
 plt.figure(figsize=(10,5))
 for i in range(5):
