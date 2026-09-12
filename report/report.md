@@ -153,8 +153,23 @@ After fitting, I generated predictions for the held-out test features. The final
 
 The final classification report produced a macro-average precision of `0.8427`, macro-average recall of `0.8439`, and macro-average F1-score of `0.8430`. Trouser had the highest recall at `0.9580`, while Shirt had the lowest recall at `0.5680`.
 
-![Fashion-MNIST classification report](figures/classification_report.png)
-*Figure 2: Classification report for the final test evaluation.*
+| Class / average | Precision | Recall | F1-score | Support |
+| --- | ---: | ---: | ---: | ---: |
+| T-shirt/top | 0.7970 | 0.8050 | 0.8010 | 1000 |
+| Trouser | 0.9726 | 0.9580 | 0.9652 | 1000 |
+| Pullover | 0.7281 | 0.7390 | 0.7335 | 1000 |
+| Dress | 0.8288 | 0.8620 | 0.8451 | 1000 |
+| Coat | 0.7389 | 0.7640 | 0.7512 | 1000 |
+| Sandal | 0.9437 | 0.9220 | 0.9327 | 1000 |
+| Shirt | 0.6283 | 0.5680 | 0.5966 | 1000 |
+| Sneaker | 0.9108 | 0.9390 | 0.9247 | 1000 |
+| Bag | 0.9285 | 0.9350 | 0.9317 | 1000 |
+| Ankle boot | 0.9498 | 0.9470 | 0.9484 | 1000 |
+| Accuracy |  |  | 0.8439 | 10000 |
+| Macro average | 0.8427 | 0.8439 | 0.8430 | 10000 |
+| Weighted average | 0.8427 | 0.8439 | 0.8430 | 10000 |
+
+*Table 1: Classification report for the final test evaluation.*
 
 In the classification report, precision measures how often predictions for a class are correct, recall measures how many examples of that class are found, and the F1-score combines precision and recall. Support is the number of test examples belonging to each class. The macro average gives equal weight to each class, which is appropriate here because the test set contains 1,000 examples per class.
 
@@ -165,21 +180,21 @@ The confusion matrix shows that the model classified footwear classes more consi
 Rows in the confusion matrix represent the true class and columns represent the predicted class. Values on the diagonal are correct predictions. Off-diagonal values show the classes assigned incorrectly. For example, 145 Shirt images were predicted as T-shirt/top, making this one of the most prominent errors in the final test evaluation.
 
 ![Fashion-MNIST confusion matrix](figures/confusion_matrix.png)
-*Figure 3: Confusion matrix for the final test evaluation.*
+*Figure 2: Confusion matrix for the final test evaluation.*
 
 ### Correct predictions example images
 
 The program displays examples from the test set with their predicted and true class names. These examples provide visual evidence of predictions where the model assigned the correct class.
 
 ![Correct test predictions](figures/correct_predictions.png)
-*Figure 4: Examples of correctly classified test images.*
+*Figure 3: Examples of correctly classified test images.*
 
 ### Misclassified examples
 
 The program also displays incorrect predictions with the predicted and true class names. The most difficult class was Shirt, which had a recall of `0.5680`. The errors may result from the 28 x 28 image resolution, similar shapes between upper-body classes, and the linear decision boundary produced from flattened pixel features.
 
 ![Incorrect test predictions](figures/incorrect_predictions.png)
-*Figure 5: Examples of incorrectly classified test images.*
+*Figure 4: Examples of incorrectly classified test images.*
 
 ## Regularisation in Logistic Regression
 
